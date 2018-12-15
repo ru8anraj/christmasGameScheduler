@@ -1,7 +1,7 @@
 const http = require('http')
     , app = require('./app/app.js')
     , server = http.createServer(app)
-    , PORT = process.env.PORT || 5002;
+    , PORT = process.env.PORT || 5005;
 
 // promises to listen server
 function startServer() {

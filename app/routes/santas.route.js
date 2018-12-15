@@ -47,8 +47,7 @@ const dbCalls = {
   }
 };
 
-
-
+/* child routes */
 santas.post('/addSanta', async function(req, res) {
   var client = await mongoClient().catch(err => console.error(err));
   var db = client.db(dbName);
@@ -75,7 +74,7 @@ santas.get('/getSantas', async function(req, res) {
     .then((t) => {
       let santas = JSON.parse(t);
       client.close();
-      res.send(santas);
+      res.json(santas);
     })
     .catch((err) => {
       console.error(err);
@@ -83,5 +82,9 @@ santas.get('/getSantas', async function(req, res) {
     });
 });
 
+santas.post('/updateChild', function(req, res) {
+  console.log(req.body);
+  res.send('done');
+});
 
 module.exports = santas;
