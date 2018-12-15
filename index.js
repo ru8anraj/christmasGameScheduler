@@ -17,7 +17,7 @@ function main() {
   //   .then(t => console.log(t))
   //   .catch(err => console.error(err));
 
-  assignSanta("http://localhost:5005/santas/getSantas").then(t => console.log(t));
+  assignSanta().then(t => console.log(t));
 
 }
 

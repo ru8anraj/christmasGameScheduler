@@ -1,10 +1,17 @@
 const superagent = require('superagent');
 
 const request = {
-  getSantas: function(url = '') {
+  /*
+   * Calling server to interact with DB
+   */
+
+  getSantas: function() {
+    /*
+     * Getting all santas data from DB
+     */
     return new Promise((resolve, reject) => {
       superagent
-        .get(url)
+        .get("http://localhost:5005/santas/getSantas")
         .end((err, res) => {
           if (err) {
             reject('Error in getting santas data - > '+ err);
@@ -15,6 +22,9 @@ const request = {
     });
   },
   updateChild: function(santas) {
+    /*
+     * Updating child for each santa in bulk to DB
+     */
     return new Promise((resolve, reject) => {
       superagent
         .post('http://localhost:5005/santas/updateChild')
@@ -22,8 +32,10 @@ const request = {
         .end((err, res) => {
           if (err) {
             reject('Error in getting santas data - > '+ err);
-          } else {
-            resolve(res.text);
+          } else if(res.text == 'done') {
+            resolve('Updated child in bulk');
+          } else if(res.text == 'error') {
+            reject('Error from db to update in bulk');
           }
         });
     });
@@ -31,31 +43,35 @@ const request = {
 };
 
 function assigningChild(santas, chitPot) {
-  return new Promise((resolve, reject) => {
-    santas.map((santa) => {
-      let random = chitPot[Math.floor(Math.random() * chitPot.length)];
-      let randIndex = chitPot.indexOf(random);
-      if (randIndex > -1) {
-        chitPot.splice(randIndex, 1);
-      }
-      santa.child = random;
-    });
-    resolve(santas);
+  /*
+   * Assigns child for each santa {{not a good logic -- need betterment}}
+   */
+  santas.map((santa) => {
+    let random = chitPot[Math.floor(Math.random() * chitPot.length)];
+    let randIndex = chitPot.indexOf(random);
+    if (randIndex > -1) {
+      chitPot.splice(randIndex, 1);
+    }
+    santa.child = random;
   });
+  return(santas);
 }
 
-async function assignSanta(url) {
-  return new Promise((resolve, reject) => {
-    try {
-      var santas = await request.getSantas(url);
-      var chitPot = santas.map(santa => santa.name);
-      var updatedSantas = await assigningChild(santas, chitPot);
-      var updatingChild = await request.updateChild(santas);
-      resolve('Assigned with child and saved to DB!');
-    } catch(error) {
-      reject('Error in assigning santas and child - > ' + error);
-    }
-  });
+async function assignSanta() {
+  /* getting santas data from DB */
+  var santas = await request.getSantas().catch(err => console.error(err));
+  
+  /* duplicating santas array */
+  var chitPot = santas.map(santa => santa.name);
+  
+  /* Assigning child to each santa */
+  var updatedSanta = await assigningChild(santas, chitPot)
+
+  /* updating the santa with value in DB */
+  await request.updateChild(updatedSanta).catch(err => console.error(err));
+  console.log(santas); // unintentional closure! {Can't understand how it works}
+
+  return('Assigned with child and saved to DB!');
 }
 
 module.exports = assignSanta;

@@ -5,6 +5,9 @@ const santas = require('express').Router()
     , collectionName = 'santas';
 
 function mongoClient() {
+  /*
+   * Creating connection to Mongo Server
+   */
   return new Promise((resolve, reject) => {
     MongoClient.connect(url, {useNewUrlParser: true}, function(err, client) {
       if (err) {
@@ -44,6 +47,24 @@ const dbCalls = {
         }
       });
     });
+  },
+
+  /* updating child to the santas collection using bulk operation */
+  updateChild: function(db, santas) {
+    return new Promise((resolve, reject) => {
+      const collection = db.collection(collectionName);
+      var bulk = collection.initializeOrderedBulkOp();
+      santas.map(santa => {
+        bulk.find({ name: santa.name}).update({ $set: {child: santa.child}});
+      });
+      bulk.execute((err, result) => {
+        if (err) {
+          reject('err in updating bulk to assign child - > '+ err);
+        } else {
+          resolve('child updated in bulk');
+        }
+      });
+    });
   }
 };
 
@@ -52,7 +73,7 @@ santas.post('/addSanta', async function(req, res) {
   var client = await mongoClient().catch(err => console.error(err));
   var db = client.db(dbName);
   var document = {
-    // for testing purpose -> Hardcoded doc obj
+    // for testing purpose -> Hardcoded doc obj !important
     name: 'tester'
   };
   dbCalls.insertSanta(db, document)
@@ -70,6 +91,7 @@ santas.post('/addSanta', async function(req, res) {
 santas.get('/getSantas', async function(req, res) {
   var client = await mongoClient().catch(err => console.error(err));
   var db = client.db(dbName);
+
   dbCalls.findSantas(db)
     .then((t) => {
       let santas = JSON.parse(t);
@@ -82,9 +104,21 @@ santas.get('/getSantas', async function(req, res) {
     });
 });
 
-santas.post('/updateChild', function(req, res) {
-  console.log(req.body);
-  res.send('done');
+santas.post('/updateChild', async function(req, res) {
+  var client = await mongoClient().catch(err => console.error(err));
+  var db = client.db(dbName);
+  var santas = req.body.santas;
+  
+  dbCalls.updateChild(db, santas)
+    .then(t => {
+      console.log(t);
+      client.close();
+      res.send('done');
+    })
+    .catch(err => {
+      console.error(err);
+      res.send('error');
+    });
 });
 
 module.exports = santas;
