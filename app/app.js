@@ -1,6 +1,11 @@
 const express = require('express')
     , app = express('app');
 
+/* importing routes */
+const indexRoute = require('./routes/index.route.js')
+    , santas = require('./routes/santas.route.js')
+    , questionBank = require('./routes/questionBank.route.js');
+
 /* cors */
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -8,13 +13,14 @@ app.use((req, res, next) => {
     next();
 });
 
-/* addons */
+/* middlewares */
 app.use(express.json());
 app.use(express.urlencoded({
   extended: false
 }));
 
 /* routes */
-// app.use();
+app.use('/', indexRoute);
+app.use('/santas', santas);
 
 module.exports = app;
