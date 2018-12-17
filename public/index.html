@@ -102,8 +102,7 @@
       $(document).ready(function(){
         $(".btn").click(function(){
           console.log('insied jq btn clicked');
-          
-          $.post("http://localhost:5005/santas/addSanta",
+          $.post("/santas/addSanta",
           {
             firstName: $('#firstName').val(),
             lastName: $('#lastName').val(),

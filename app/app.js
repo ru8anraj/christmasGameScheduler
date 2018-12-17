@@ -13,6 +13,9 @@ app.use((req, res, next) => {
     next();
 });
 
+/* static files */
+app.use(express.static('./public/'));
+
 /* middlewares */
 app.use(express.json());
 app.use(express.urlencoded({
@@ -20,7 +23,7 @@ app.use(express.urlencoded({
 }));
 
 /* routes */
-app.use('/', indexRoute);
+// app.use('/', indexRoute);
 app.use('/santas', santas);
 
 module.exports = app;
