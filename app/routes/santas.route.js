@@ -55,7 +55,7 @@ const dbCalls = {
       const collection = db.collection(collectionName);
       var bulk = collection.initializeOrderedBulkOp();
       santas.map(santa => {
-        bulk.find({ name: santa.name}).update({ $set: {child: santa.child}});
+        bulk.find({ name: santa.name}).update({ $set: {childName: santa.childName, childEmail: santa.childEmail}});
       });
       bulk.execute((err, result) => {
         if (err) {
@@ -70,11 +70,16 @@ const dbCalls = {
 
 /* child routes */
 santas.post('/addSanta', async function(req, res) {
+  console.log('called post!');
+  
   var client = await mongoClient().catch(err => console.error(err));
   var db = client.db(dbName);
+  if(req.body) {
+    console.log('body from post add santa - > ', req.body);
+  }
   var document = {
-    // for testing purpose -> Hardcoded doc obj !important
-    name: 'tester'
+    name: req.body.firstName +" "+ req.body.lastName,
+    email: req.body.email
   };
   dbCalls.insertSanta(db, document)
     .then((t) => {

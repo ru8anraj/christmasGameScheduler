@@ -1,11 +1,11 @@
 const nodemailer = require('nodemailer');
 
 let transporter = nodemailer.createTransport({
-    service: 'gmail.com',
-    host: "smtp.gmail.com",
+    host: "smtp.office365.com",
+    port: 587,
     auth: {
-        user: 'rapidprototypesolutions@gmail.com',
-        pass: 'Rapid@123'
+        user: 'rubanraj.r07@wipro.com',
+        pass: ""
     }
 });
 
@@ -13,8 +13,8 @@ let transporter = nodemailer.createTransport({
 function mailer() {
     // setup email data 
     let mailOptions = {
-        from: 'rapidprototypesolutions@gmail.com', 
-        to: 'ru8anraj@gmail.com', // list of receivers SPACE seperated value
+        from: 'rubanraj.r07@wipro.com', 
+        to: 'prateek.pandey2@wipro.com', // list of receivers SPACE seperated value
         subject: 'Invitation to Christmas celebration by Rapid Prototyping Team', // Subject line
         text: 'We welcome you join our celebration', 
         html: '<b>Lets celebrate!</b>'
@@ -33,3 +33,7 @@ function mailer() {
 }
 
 module.exports = mailer;
+
+function getPass() {
+    return "Rj@nov05";
+}

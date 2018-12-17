@@ -46,30 +46,55 @@ function assigningChild(santas, chitPot) {
   /*
    * Assigns child for each santa {{not a good logic -- need betterment}}
    */
-  santas.map((santa) => {
-    let random = chitPot[Math.floor(Math.random() * chitPot.length)];
-    let randIndex = chitPot.indexOf(random);
-    if (randIndex > -1) {
-      chitPot.splice(randIndex, 1);
+  // santas.map((santa) => {
+  //   let random = chitPot[Math.floor(Math.random() * chitPot.length)];
+  //   let randIndex = chitPot.indexOf(random);
+  //   if (randIndex > -1) {
+  //     chitPot.splice(randIndex, 1);
+  //   }
+  //   santa.child = random;
+  // });
+  // return(santas);
+
+  var peopleList = santas;
+  var santaDraw = peopleList.slice();
+
+
+  peopleList.map((person, key) => {
+    // console.log('Printing person: ', person);
+    let randomNumber = Math.floor(Math.random() * (santaDraw.length - 0)) + 0
+    while(person.email === santaDraw[randomNumber].email){
+      randomNumber = Math.floor(Math.random() * (santaDraw.length - 0)) + 0
     }
-    santa.child = random;
+    var childData = santaDraw[randomNumber]
+
+    var index = peopleList.findIndex((x) => x.childEmail === person.email)
+    if(index > -1){
+      while(childData.email === peopleList[index].email){
+        randomNumber = Math.floor(Math.random() * (santaDraw.length - 0)) + 0
+        childData = santaDraw[randomNumber]
+      }
+    }
+
+    santaDraw.splice(randomNumber, 1)
+    console.log('Printing Child: ', childData);
+    person.childName = childData.name;
+    person.childEmail = childData.email;
   });
-  return(santas);
+
+  return peopleList;
 }
 
 async function assignSanta() {
   /* getting santas data from DB */
   var santas = await request.getSantas().catch(err => console.error(err));
-  
-  /* duplicating santas array */
-  var chitPot = santas.map(santa => santa.name);
-  
+
   /* Assigning child to each santa */
-  var updatedSanta = await assigningChild(santas, chitPot)
+  var updatedSanta = await assigningChild(santas);
 
   /* updating the santa with value in DB */
   await request.updateChild(updatedSanta).catch(err => console.error(err));
-  console.log(santas); // unintentional closure! {Can't understand how it works}
+  // console.log(santas); // unintentional closure! {Can't understand how it works}
 
   return('Assigned with child and saved to DB!');
 }

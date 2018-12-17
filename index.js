@@ -13,11 +13,11 @@ function timer(){
 
 function main() {
   /* Calling mailing service */
-  // mailer()
-  //   .then(t => console.log(t))
-  //   .catch(err => console.error(err));
+  mailer()
+    .then(t => console.log(t))
+    .catch(err => console.error(err));
 
-  assignSanta().then(t => console.log(t));
+  // assignSanta().then(t => console.log(t));
 
 }
 
