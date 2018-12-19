@@ -25,5 +25,6 @@ app.use(express.urlencoded({
 /* routes */
 // app.use('/', indexRoute);
 app.use('/santas', santas);
+app.use('/qb', questionBank);
 
 module.exports = app;
