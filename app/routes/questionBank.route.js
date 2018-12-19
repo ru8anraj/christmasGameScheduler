@@ -47,7 +47,7 @@ qb.get('/', async function(req, res) {
   dbCalls.getQuest(db)
     .then((t) => {
       questions = JSON.parse(t);
-      res.json(question);
+      res.json(questions);
     })
     .catch((err) => {
       console.error(err);
@@ -56,16 +56,17 @@ qb.get('/', async function(req, res) {
 });
 
 qb.get('/quest', function(req, res) {
-  let q = questions.map((que, i) => {
-    if(i < 5) {
-      return que;
-    }
-  });
-  questions.pop();
-  questions.pop();
-  questions.pop();
-  questions.pop();
-  questions.pop();  
+  //let q = questions.map((que, i) => {
+    //if(i < 5) {
+      //return que;
+//    }
+  //});
+	let q=[];
+  for(let i=0;i < 5;i++){
+ 	q.push(questions[Math.floor(Math.random()*questions.length)]); 
+  }
+  console.log(q);		
+
   res.json(q);
 });
 
